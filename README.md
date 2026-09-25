@@ -67,6 +67,14 @@ Convention: **clear means a clean bed** — filament scraps and debris count as 
 
 Split is group-aware (all frames from one printer/camera go to exactly one split), so test frames come from devices never seen in training.
 
+## ⚠️ Known failure mode (2026-09-25): pulled from production
+
+This v1 single-image model was **disabled in the farm** after human review found printed parts in 15/15 held-out frames it scored as confidently empty (P(occupied) 0.03–0.10), and at least one real auto-release occurred with a part still on the bed. Dark/small parts on dark textured beds are its blind spot — accuracy metrics computed against partially noisy labels did not capture this.
+
+**Do not use v1 alone to auto-release a bed.** The successor is a twin-encoder pair model (reference frame + current frame → part_added / clear_removed / clear_unchanged) which held zero false releases on the same frames; it will be published as `BedNet-twin` when validated. Lesson: single-image "is this empty?" classification is ill-posed for farms with varied dark beds — condition the decision on the printer's own baseline image.
+
+---
+
 ## Results
 
 Scored on the held-out test split (201 frames, unseen printers) against **operator-validated labels**:
