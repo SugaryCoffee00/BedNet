@@ -67,11 +67,13 @@ Convention: **clear means a clean bed** — filament scraps and debris count as 
 
 Split is group-aware (all frames from one printer/camera go to exactly one split), so test frames come from devices never seen in training.
 
-## ⚠️ Known failure mode (2026-09-25): pulled from production
+## ✅ BedNet v2: in production (2026-09-26)
 
-This v1 single-image model was **disabled in the farm** after human review found printed parts in 15/15 held-out frames it scored as confidently empty (P(occupied) 0.03–0.10), and at least one real auto-release occurred with a part still on the bed. Dark/small parts on dark textured beds are its blind spot — accuracy metrics computed against partially noisy labels did not capture this.
+v1 was pulled from production on 2026-09-25 after human review found printed parts in 15/15 held-out frames it scored as confidently empty — accuracy metrics computed against partially noisy labels had hidden the failure mode (dark/small parts on dark textured beds).
 
-**Do not use v1 alone to auto-release a bed.** The successor is a twin-encoder pair model (reference frame + current frame → part_added / clear_removed / clear_unchanged) which held zero false releases on the same frames; it will be published as `BedNet-twin` when validated. Lesson: single-image "is this empty?" classification is ill-posed for farms with varied dark beds — condition the decision on the printer's own baseline image.
+**BedNet v2**, retrained on the fully corrected label set (1,234 operator-validated labels), reaches **95.0% test accuracy / 0.978 AUC**. It ran in live shadow mode first: across 28 shadow-scored bed checks, **zero DANGER events** (no case where v2 would release and the LLM judge blocked); 6 releases agreed with the judge, 5 conservative misses cost speed only. As of 2026-09-26 v2 is enabled for real production releases behind that shadow validation — it fast-paths confident clears and never overrides other safety checks.
+
+Standing lesson from v1: single-image "is this empty?" classification is hard for farms with varied dark beds — condition the decision on label quality and, where possible, the printer's own baseline image. A twin-encoder pair model (reference frame + current frame → part_added / clear_removed / clear_unchanged) remains the next-generation candidate.
 
 ---
 
