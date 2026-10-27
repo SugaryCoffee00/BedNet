@@ -1,0 +1,54 @@
+{
+  "schema": "bednet-checkpoint-specific-manifest-v1",
+  "checkpoint_sha256": "d4c97d7aa6112754cf1e994d9df41ee5175c753c862c06c5befaa603a5fe3ab5",
+  "architecture": "torchvision.fasterrcnn_resnet50_fpn_v2",
+  "num_classes_including_background": 7,
+  "class_names": [
+    "bed",
+    "print",
+    "foreign",
+    "scrap",
+    "spaghetti",
+    "failure"
+  ],
+  "label_offset": 1,
+  "input_profile": "legacy_external_plus_internal_imagenet_v1",
+  "external_resize": {
+    "size": 640,
+    "aspect_preserved": true,
+    "long_side_cap_factor": 1.6,
+    "PIL_resample": "same default as trainer",
+    "internal_min": [
+      800
+    ],
+    "internal_max": 1333
+  },
+  "external_normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "internal_normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "helper_sha256": "e0c2b531d601ace3f9d78499a7a971e880aa225cc870efd686aec3cac1a45948",
+  "policy_version": "v92-f44-research-policy-v1",
+  "research_only": true,
+  "release_authority": false
+}

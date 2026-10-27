@@ -1,0 +1,296 @@
+{
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "bednet-detector-inference-v1"
+    },
+    "observation": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "pixel_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "pixel_hash_convention": {
+          "const": "sha256(RGB_bytes + str((width, height)).encode())"
+        },
+        "original_dimensions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "path",
+        "pixel_sha256",
+        "pixel_hash_convention",
+        "original_dimensions"
+      ],
+      "additionalProperties": false
+    },
+    "checkpoint": {
+      "type": "object",
+      "properties": {
+        "loaded_sha256": {
+          "const": "d4c97d7aa6112754cf1e994d9df41ee5175c753c862c06c5befaa603a5fe3ab5"
+        },
+        "input_profile": {
+          "const": "legacy_external_plus_internal_imagenet_v1"
+        },
+        "adapter_version": {
+          "const": "v92-f44-adapter-1.0.0"
+        }
+      },
+      "required": [
+        "loaded_sha256",
+        "input_profile",
+        "adapter_version"
+      ],
+      "additionalProperties": false
+    },
+    "preprocessing": {
+      "type": "object",
+      "properties": {
+        "input_dimensions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "input_tensor_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tensor_dtype": {
+          "const": "float32"
+        },
+        "tensor_layout": {
+          "const": "CHW"
+        },
+        "tensor_hash_convention": {
+          "const": "sha256(contiguous_CHW_float32_bytes)"
+        },
+        "resized_rgb_pixel_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "input_dimensions",
+        "input_tensor_sha256",
+        "tensor_dtype",
+        "tensor_layout",
+        "tensor_hash_convention",
+        "resized_rgb_pixel_sha256"
+      ],
+      "additionalProperties": false
+    },
+    "detector_prediction": {
+      "type": "object",
+      "properties": {
+        "boxes": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "minItems": 4,
+            "maxItems": 4
+          }
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5
+          }
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "required": [
+        "boxes",
+        "classes",
+        "scores"
+      ],
+      "additionalProperties": false
+    },
+    "research_gate": {
+      "type": "object",
+      "properties": {
+        "policy_version": {
+          "const": "v92-f44-research-policy-v1"
+        },
+        "decision": {
+          "enum": [
+            "ALERT",
+            "UNCERTAIN",
+            "BLOCK",
+            "CLEAR_CANDIDATE"
+          ]
+        },
+        "selected_bed_index": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bed": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "box": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                },
+                "score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "class": {
+                  "const": 0
+                }
+              },
+              "required": [
+                "box",
+                "score",
+                "class"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "blocking_prediction_indices": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "global_alert_prediction_indices": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "object_area_overlap": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "scrap_blocks": {
+          "const": false
+        },
+        "limitations": {
+          "type": "string"
+        },
+        "release_authority": {
+          "const": false
+        }
+      },
+      "required": [
+        "policy_version",
+        "decision",
+        "selected_bed_index",
+        "bed",
+        "blocking_prediction_indices",
+        "global_alert_prediction_indices",
+        "object_area_overlap",
+        "scrap_blocks",
+        "limitations",
+        "release_authority"
+      ],
+      "additionalProperties": false
+    },
+    "research_only": {
+      "const": true
+    },
+    "release_authority": {
+      "const": false
+    },
+    "ground_truth": {
+      "type": "object",
+      "properties": {
+        "positive_annotations": {},
+        "positive_annotation_status": {},
+        "human_verdict": {},
+        "occupancy_human_verdict": {},
+        "observability": {},
+        "provenance": {},
+        "graded_at": {},
+        "cohort": {},
+        "split": {},
+        "training_eligible": {},
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_artifact": {},
+        "source_artifact_sha256": {},
+        "gate_target": {},
+        "binary_release_label": {},
+        "classification_eligible": {},
+        "release_verification_eligible": {},
+        "visibility": {}
+      },
+      "required": [
+        "scope"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "observation",
+    "checkpoint",
+    "preprocessing",
+    "detector_prediction",
+    "research_gate",
+    "research_only",
+    "release_authority"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "bednet-detector-inference-v1",
+  "description": "Research-only v92/f44 output. Boxes are normalized xyxy in external aspect-preserving resized RGB (not padded/internal coordinates). Runtime validate_result additionally checks aligned array lengths, positive-area boxes, exact resize geometry, finite numbers, and recomputed gate agreement. Unknown/absent annotations are not negatives."
+}

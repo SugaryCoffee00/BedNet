@@ -1,0 +1,17 @@
+{
+  "schema": "bednet-publication-verification-v1",
+  "actorLabel": "Kestrel",
+  "checkpoint_sha256": "d4c97d7aa6112754cf1e994d9df41ee5175c753c862c06c5befaa603a5fe3ab5",
+  "public_unit_tests": {
+    "preprocessing": 15,
+    "adapter": 39,
+    "display": 12
+  },
+  "real_cli_forward": "passed",
+  "prediction_scores_boxes_and_classes": "exact match to frozen reference",
+  "display_threshold": 0.6,
+  "display_filter_does_not_change_raw_predictions_or_gate": true,
+  "release_authority": false,
+  "private_images_or_judgments_in_public_package": false,
+  "live_printer_or_hugging_face_changes": false
+}

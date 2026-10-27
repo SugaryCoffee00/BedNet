@@ -1,0 +1,94 @@
+{
+  "schema": "bednet-adapter-input-contract-v1",
+  "api": {
+    "constructor": "Adapter(*, checkpoint, manifest, device=\"cpu\")",
+    "inference": "adapter.predict(*, image, ground_truth=None, render=None)",
+    "required_identity": "checkpoint_manifest.json must exactly match all frozen fields; no defaults or profile inference",
+    "ground_truth": "Explicit optional scoped whitelist only; never merge an arbitrary source row or classifier prediction"
+  },
+  "cli": {
+    "required": [
+      "--checkpoint",
+      "--manifest",
+      "--image",
+      "--out"
+    ],
+    "optional": {
+      "--device": {
+        "default": "cpu",
+        "choices": [
+          "cpu",
+          "cuda"
+        ]
+      },
+      "--render": "Optional research-only actual detector overlay on underlying resized RGB"
+    },
+    "forbidden": [
+      "profile override",
+      "threshold override",
+      "training",
+      "download",
+      "production release"
+    ]
+  },
+  "image": {
+    "decode": "PIL Image.open then convert RGB, no crop, EXIF transpose, autolevel or other enhancement",
+    "external_resize": {
+      "size": 640,
+      "long_side_cap_factor": 1.6,
+      "aspect_preserved": true,
+      "rounding": "int(round(dimension * scale))",
+      "PIL_resample": "same default as historical trainer"
+    },
+    "external_normalization": {
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "dtype": "float32"
+    },
+    "internal_normalization": {
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ]
+    },
+    "internal_geometry": {
+      "min_size": [
+        800
+      ],
+      "max_size": 1333
+    },
+    "pixel_hash": "sha256(RGB bytes + str((width,height)).encode())",
+    "model_input_hash": "sha256(contiguous CHW float32 bytes before internal normalization)"
+  },
+  "class_mapping": {
+    "model_labels": "1..6",
+    "output_classes": "0..5",
+    "offset_subtract_once": 1,
+    "names": [
+      "bed",
+      "print",
+      "foreign",
+      "scrap",
+      "spaghetti",
+      "failure"
+    ]
+  },
+  "validation": "Exact checkpoint/helper hash before helper import; exact manifest identity; strict state dict/head load; internal transform check; eval/inference_mode/FP32; finite bounded positive-area predictions; output namespace/gate agreement checks. Invalid inputs exit CLI2 without publishing a result. CUDA >=75C or telemetry failure stops the process; no hardware changes.",
+  "output_write_scope": "Only under the directory containing v92_inference_adapter.py (adapter_v1); parent source files and checkpoints cannot be output targets.",
+  "research_only": true,
+  "release_authority": false
+}
