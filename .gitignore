@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+detector/*.pt
+detector/adapter_v1/result*
+detector/adapter_v1/runtime_cache/

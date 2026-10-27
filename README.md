@@ -1,16 +1,38 @@
 ---
 license: cc-by-4.0
-base_model: efficientnet-b0
 tags:
   - vision
-  - image-classification
+  - object-detection
   - 3d-printing
-  - onnx
-  - binary-classification
-metrics:
-  - accuracy
-  - auc
+  - pytorch
 ---
+
+# BedNet — 3D Printer Bed Detection
+
+## Current detector research release
+
+**[Download the six-class detector](https://github.com/SugaryCoffee00/BedNet/releases/tag/detector-f44-research-v1.0.0)** · **[Setup, inference and model card](detector/README.md)**
+
+This is the Faster R-CNN checkpoint behind the recent bounding-box results, published with its verified checkpoint-specific input adapter. It detects **bed, print, foreign, scrap, spaghetti and failure**. Visualization defaults to **confidence ≥60%**, keeping only the highest-scoring qualifying bed; raw JSON retains all predictions.
+
+> **Research only — no automatic printer-release authority.** This is an existing checkpoint with corrected inference compatibility, not a newly trained or deployment-qualified model. False alerts, missed objects and incorrect bed localization remain. Hiding a detection below 60% does not prove a clear bed or change the research gate. Every result has `release_authority=false`.
+
+The 173,483,050-byte checkpoint is a release asset, not a Git blob. SHA256: `d4c97d7aa6112754cf1e994d9df41ee5175c753c862c06c5befaa603a5fe3ab5`.
+
+```bash
+python -m pip install -r detector/requirements.txt
+gh release download detector-f44-research-v1.0.0 --repo SugaryCoffee00/BedNet --pattern bednet-detector-f44.pt --dir detector
+python detector/predict.py --checkpoint detector/bednet-detector-f44.pt --image frame.jpg --out detector/adapter_v1/result.json --render detector/adapter_v1/result.png
+```
+
+CPU is the default; optional `--device cuda` uses FP32 with a 75°C thermal stop. Choose fresh output filenames; the wrapper refuses overwrites or input/output collisions. Legacy normalization, class mapping and geometry are explicitly pinned; see the [model card](detector/README.md) before using another input path. This GitHub update does not replace the Hugging Face classifier or deploy anything to the print farm.
+
+## Legacy classifier documentation
+
+Root `bednet.pt`, `bednet.onnx` and prior examples remain unchanged for compatibility. They are **not the detector above**. Historical classifier documentation is preserved below and in [legacy/README.md](legacy/README.md); earlier metrics and production claims have not been revalidated by this detector release.
+
+<details>
+<summary>Expand historical binary-classifier documentation and failure notices</summary>
 
 # BedNet — 3D Printer Bed Occupancy Classifier
 
@@ -199,3 +221,5 @@ If you use it in a paper, cite:
   howpublished = {\url{https://huggingface.co/SugaryCoffee/BedNet}}
 }
 ```
+
+</details>
